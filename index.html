@@ -415,7 +415,7 @@ function tablaPagos(monto) {
   const rows = [['ef'], ['deb'], ...CUOTAS.map(c => [String(c)])].map(([m]) => {
     const r = precio(monto, m, b, S.regular);
     if (!r) return '';
-    const name = m === 'ef' ? 'Efectivo / transferencia' : m === 'deb' ? `Débito${debitoPct(b) ? ` (+${debitoPct(b)}%)` : ''}` : (m === '1' ? '1 pago' : m + ' cuotas') + (r.si ? '<span class="tag">sin interés</span>' : '');
+    const name = m === 'ef' ? 'Efectivo / transferencia' : m === 'deb' ? `Débito${S.canEdit && debitoPct(b) ? ` (+${debitoPct(b)}%)` : ''}` : (m === '1' ? '1 pago' : m + ' cuotas') + (r.si ? '<span class="tag">sin interés</span>' : '');
     return `<tr class="${S.mode === m ? 'cur' : ''}"><td>${name}</td><td>${r.c > 1 ? fmt(r.cuota) : '—'}</td><td class="total">${fmt(r.total)}</td></tr>`;
   }).join('');
   return `<table class="plans"><thead><tr><th>${b ? esc(b.nombre) : 'Forma de pago'}${S.regular ? ' · cliente regular' : ''}</th><th>Por cuota</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table>`;
@@ -426,7 +426,7 @@ function detailHTML(p) {
   return `<div class="detail">
     ${p.img ? `<img class="big-img" data-ph="1" alt="${esc(p.d)}" src="${esc(imgSrc(p.img))}">` : ''}
     ${tablaPagos(contado(p))}
-    <p class="base">Lista ${esc(pv.nombre)}: ${fmt(p.precio)}${pv.iva === false ? ' + IVA 21%' : ' (IVA incl.)'} · +${Number(pv.margen ?? 30)}% → contado ${fmt(contado(p))}</p>
+    ${S.canEdit ? `<p class="base">Lista ${esc(pv.nombre)}: ${fmt(p.precio)}${pv.iva === false ? ' + IVA 21%' : ' (IVA incl.)'} · +${Number(pv.margen ?? 30)}% → contado ${fmt(contado(p))}</p>` : ''}
   </div>`;
 }
 
