@@ -68,12 +68,19 @@ select,.input{background:var(--surface);border:1.5px solid var(--line);border-ra
 .pick[aria-pressed="true"] span{background:var(--accent);border-color:var(--accent)}
 .pick svg{opacity:0}
 .pick[aria-pressed="true"] svg{opacity:1}
-.item-head{flex:1;min-width:0;display:flex;gap:12px;align-items:center;text-align:left;border:0;background:transparent;padding:11px 14px}
+.item-head{flex:1;min-width:0;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;text-align:left;border:0;background:transparent;padding:11px 14px}
 .item-main{flex:1;min-width:0;display:grid;gap:3px}
+.item-foot{flex-basis:100%;display:grid;gap:3px 12px;border-top:1px dashed var(--line);padding-top:6px;align-items:center}
+.item-foot.has-img{grid-template-columns:auto 1fr}
+.item-foot .thumb{grid-row:span 2;width:56px;height:56px}
 .thumb{width:44px;height:44px;object-fit:contain;background:#fff;border-radius:8px;flex:none}
 .big-img{max-width:100%;max-height:240px;background:#fff;border-radius:10px;justify-self:start;object-fit:contain}
-.item-desc{font-weight:600;line-height:1.25}
+.item-desc{font-weight:600;line-height:1.25;overflow-wrap:break-word}
 .item-meta{font-size:.8rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 10px}
+.item-meta .brand-m{text-transform:uppercase;letter-spacing:.06em;font-size:.74rem}
+.item-meta .brand-m b{font-weight:800;color:var(--fg);font-size:.86rem;letter-spacing:.03em}
+.item-prov{font-size:.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.item-prov b{color:var(--accent-2);font-weight:800}
 .item-meta .code{font-variant-numeric:tabular-nums;color:var(--fg);opacity:.8}
 .item-price{text-align:right;flex:none;display:grid}
 .item-price small{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
@@ -396,17 +403,27 @@ function renderResults() {
       <div class="item-row">
         <button class="pick" data-pick="${esc(p.u)}" aria-pressed="${picked}" aria-label="${picked ? 'Sacar del carrito' : 'Agregar al carrito'}"><span>${ICON_CHECK}</span></button>
         <button class="item-head" data-u="${esc(p.u)}" aria-expanded="${open}">
-          ${p.img ? `<img class="thumb" data-ph="1" loading="lazy" alt="" src="${esc(imgSrc(p.img))}">` : ''}
           <span class="item-main">
             <span class="item-desc">${esc(p.d)}</span>
-            <span class="item-meta">${p.m ? `<span>${esc(p.m)}</span>` : ''}${p.c ? `<span class="code">${esc(p.c)}</span>` : ''}<span>${esc(pv.nombre)}</span></span>
           </span>
           ${priceCell(p)}
+          <span class="item-foot${p.img ? ' has-img' : ''}">
+            ${p.img ? `<img class="thumb" data-ph="1" loading="lazy" alt="" src="${esc(imgSrc(p.img))}">` : ''}
+            <span class="item-meta">${brandHTML(p.m)}${p.c ? `<span class="code">${esc(p.c)}</span>` : ''}</span>
+            <span class="item-prov">Proveedor: <b>${esc(pv.nombre)}</b></span>
+          </span>
         </button>
       </div>
       ${open ? detailHTML(p) : ''}
     </article>`;
   }).join('');
+}
+
+/* marca en mayúscula y negrita; lo que viene después del " · " (rubro) queda normal */
+function brandHTML(m) {
+  if (!m) return '';
+  const [marca, ...resto] = m.split(' · ');
+  return `<span class="brand-m">Marca: <b>${esc(marca)}</b></span>${resto.length ? `<span>${esc(resto.join(' · '))}</span>` : ''}`;
 }
 
 /* Tabla con todas las formas de pago para un monto contado */
