@@ -557,7 +557,7 @@ const VALIDEZ = 7;
 function nextPresNum() { return String((parseInt(lsGet('presNum') || '0', 10) || 0) + 1).padStart(4, '0'); }
 function usedPresNum() {
   const n = parseInt(S.pres.num, 10);
-  if (n > 0 && n >= (parseInt(lsGet('presNum') || '0', 10) || 0)) lsSet('presNum', String(n));
+  if (n > 0 && n > (parseInt(lsGet('presNum') || '0', 10) || 0)) lsSet('presNum', String(n));
   S.pres.num = nextPresNum();
   if (S.presOpen) setTimeout(renderPres, 800);
 }
@@ -570,7 +570,7 @@ function renderPres() {
     <div class="row" style="justify-content:space-between"><h2 style="margin:0">Presupuesto</h2><button class="btn small" data-act="backCart">Volver al carrito</button></div>
     <div class="pres-form">
       <div class="row">
-        <label class="field" style="width:96px">N° presupuesto<input class="input" data-pf="num" value="${esc(P.num)}" inputmode="numeric" autocomplete="off"></label>
+        <label class="field" style="width:96px">N° presupuesto<input class="input" value="${esc(P.num)}" readonly tabindex="-1" style="opacity:.75"></label>
         <label class="field grow">Nombre del cliente<input class="input" data-pf="cli" value="${esc(P.cli)}" autocomplete="off"></label>
         <label class="field grow">Vehículo<input class="input" data-pf="veh" value="${esc(P.veh)}" placeholder="Ej: Toyota Hilux 2019" autocomplete="off"></label>
       </div>
